@@ -1,0 +1,15 @@
+{
+  "name": "mcp-salesforce",
+  "version": "1.0.0",
+  "description": "MCP server for Salesforce integration",
+  "main": "server2.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server2.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "jsforce": "^1.11.1"
+  }
+}
