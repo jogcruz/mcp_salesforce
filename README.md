@@ -1,12 +1,13 @@
 # Salesforce MCP Integration
 
-This project provides a Model Context Protocol (MCP) server for Salesforce integration, allowing you to execute SOQL queries and interact with Salesforce data through a standardized interface.
+This project provides a Model Context Protocol (MCP) server for Salesforce integration, allowing you to execute SOQL queries, retrieve metadata, and interact with Salesforce data through a standardized interface.
 
 ## Features
 
 - Connect to Salesforce orgs using environment variables
 - Execute SOQL queries against Salesforce data
-- Retrieve and process Salesforce records
+- Retrieve and process Salesforce records and metadata
+- List and manage Salesforce Flows
 - Secure credential management using environment variables
 
 ## Prerequisites
@@ -14,7 +15,7 @@ This project provides a Model Context Protocol (MCP) server for Salesforce integ
 - Node.js (v14 or higher)
 - npm (Node Package Manager)
 - Salesforce org with API access
-- Salesforce credentials (username, password, and security token)
+- Salesforce credentials (username and password)
 
 ## Installation
 
@@ -29,16 +30,16 @@ This project provides a Model Context Protocol (MCP) server for Salesforce integ
    npm install
    ```
 
-3. Create a `.env` file in the root directory with your Salesforce credentials:
+3. Create a `.env` file in the root directory with your Salesforce credentials and API version:
    ```
    SF_LOGIN_URL=https://your-instance.salesforce.com/
    SF_USERNAME=your_username
    SF_PASSWORD=your_password
-   SF_SECURITY_TOKEN=your_security_token
-   PORT=3000
+   SF_API_VERSION=58.0
    ```
 
-   Note: For sandbox environments, use `https://test.salesforce.com/` as the login URL.
+   - For sandbox environments, use `https://test.salesforce.com/` as the login URL.
+   - The `SF_API_VERSION` variable controls the Salesforce API version used by the integration. Update it as needed for your org.
 
 ## Usage
 
@@ -61,10 +62,34 @@ Example SOQL query:
 SELECT Id, Name, Status FROM Account LIMIT 5
 ```
 
+### Listing Salesforce Flows
+
+You can list all the flows in your Salesforce org using the `retrieveMetadata` tool with the `Flow` metadata type. This will return all available flows and their metadata.
+
+## Configuring mcpServers in Cursor
+
+To use this Salesforce MCP server with Cursor, add the following configuration to your `mcp.json` file in Cursor:
+
+```
+"mcpServers": {
+  "mcp-salesforce": {
+    "command": "node /absolute/path/to/your/project/root/server.js",
+    "transport": "stdio",
+    "args": []
+  }
+}
+```
+
+- Replace `/absolute/path/to/your/project/root/server.js` with the absolute path to your `server.js` file.
+- Make sure the server is started from the correct directory so it can find the `.env` file and dependencies.
+
+After adding this configuration to your `mcp.json`, you can connect to the Salesforce MCP server from within Cursor and use all the available tools.
+
 ## Project Structure
 
-- `server.js` - Main MCP server implementation
-- `.env` - Environment variables for Salesforce credentials
+- `server.js` - Main MCP server implementation and Salesforce connection setup
+- `tools.js` - All MCP tool definitions (SOQL, metadata, flows, etc.)
+- `.env` - Environment variables for Salesforce credentials and API version
 - `package.json` - Project dependencies and scripts
 
 ## Security Considerations
